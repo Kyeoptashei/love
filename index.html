@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Secret Space ❤️</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0f0f12;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .app-screen {
+            width: 100%;
+            max-width: 412px;
+            min-height: 100vh;
+            background-color: #16161a;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* --- ENVELOPE DESIGN --- */
+        .envelope-wrapper {
+            cursor: pointer;
+            text-align: center;
+            margin-top: 40%;
+        }
+        .envelope {
+            width: 150px;
+            height: 100px;
+            background-color: #ff6b81;
+            position: relative;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            margin: 0 auto 20px auto;
+        }
+        .envelope::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            border-left: 75px solid transparent;
+            border-right: 75px solid transparent;
+            border-top: 60px solid #ff4757;
+            transform-origin: top;
+            transition: transform 0.4s ease;
+            z-index: 3;
+        }
+        .envelope.open::before { transform: rotateX(180deg); z-index: 1; }
+        .letter {
+            position: absolute; bottom: 5px; left: 10px;
+            width: 130px; height: 80px; background-color: #ffffff;
+            border-radius: 5px; transition: transform 0.4s ease; z-index: 2;
+            display: flex; justify-content: center; align-items: center; color: #ff4757; font-size: 2rem;
+        }
+        .envelope.open .letter { transform: translateY(-50px); }
+        
+        .click-btn {
+            background: linear-gradient(135deg, #ff6b81, #ff4757);
+            border: none; padding: 12px 30px; color: white;
+            font-size: 1rem; font-weight: bold; border-radius: 25px; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 107, 129, 0.4);
+        }
+
+        /* --- MAIN CONTENT & CONTAINERS --- */
+        .main-app-content {
+            display: none;
+            width: 100%;
+        }
+
+        .header-title {
+            text-align: center;
+            color: #ff6b81;
+            margin-bottom: 5px;
+        }
+
+        .music-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #00ffcc;
+            color: #00ffcc;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .counter-box {
+            text-align: center;
+            background: linear-gradient(135deg, rgba(255, 107, 129, 0.1), rgba(0, 255, 204, 0.05));
+            border: 1px solid rgba(255, 107, 129, 0.3);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        .counter-days {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #ff6b81;
+            display: block;
+            margin-top: 3px;
+        }
+
+        .album-container {
+            background-color: #1f1f25;
+            border: 2px solid #00ffcc;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+            position: relative;
+        }
+
+        .album-container h3 {
+            margin-top: 0;
+            color: #00ffcc;
+            border-bottom: 1px solid rgba(0, 255, 204, 0.1);
+            padding-bottom: 8px;
+        }
+
+        /* --- LITERAL FERRIS WHEEL --- */
+        .ferris-wheel-wrapper {
+            position: relative;
+            width: 100%;
+            height: 380px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        /* Stand sa ilalim ng laruan */
+        .wheel-stand-front {
+            position: absolute;
+            bottom: 15px;
+            width: 140px;
+            height: 220px;
+            border-left: 6px solid #00ffcc;
+            border-right: 6px solid #00ffcc;
+            border-bottom: 6px solid #00ffcc;
+            border-radius: 6px;
+            transform: perspective(300px) rotateX(25deg);
+            z-index: 1;
+            box-shadow: 0 5px 15px rgba(0, 255, 204, 0.2);
+        }
+
+        /* Ang Main Wheel Pivot */
+        .wheel-pivot {
+            width: 240px;
+            height: 240px;
+            position: relative;
+            z-index: 3;
+            top: 25px;
+        }
+
+        /* Ang Yellow/Neon Main Ring */
+        .actual-wheel {
+            width: 100%;
+            height: 100%;
+            border: 4px dashed #ffea00;
+            border-radius: 50%;
+            box-sizing: border-box;
+            position: absolute;
+            box-shadow: 0 0 15px rgba(255, 234, 0, 0.3);
+            animation: spinWheel 40s linear infinite;
+        }
+
+        /* Pink Center Cap */
+        .wheel-center {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 22px; height: 22px;
+            background-color: #ff6b81;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+        }
+
+        /* Connecting Spokes / Lines */
+        .spoke {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 120px;
+            height: 2px;
+            background: rgba(255, 234, 0, 0.3);
+            transform-origin: left center;
+        }
+        .spoke-1 { transform: rotate(0deg); }
+        .spoke-2 { transform: rotate(90deg); }
+        .spoke-3 { transform: rotate(180deg); }
+        .spoke-4 { transform: rotate(270deg); }
+
+        /* --- THE 4 HANGING PHOTOS (GONDOLAS) --- */
+        .gondola-seat {
+            position: absolute;
+            width: 85px;
+            height: 75px;
+            background: #ffffff;
+            padding: 5px 5px 12px 5px;
+            border-radius: 6px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+            box-sizing: border-box;
+            border: 1px solid #e2e8f0;
+            
+            top: 50%; left: 50%;
+            margin-top: -37.5px; margin-left: -42.5px;
+            transform-origin: center 6px;
+        }
+
+        .gondola-seat::before {
+            content: '';
+            position: absolute;
+            top: -5px; left: 50%;
+            width: 8px; height: 8px;
+            background: #ff6b81;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            border: 1px solid #fff;
+        }
+
+        .gondola-seat img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 4px;
+            display: block;
+        }
+
+        /* Gamit ang unique classes para hindi mag-gulo ang animation kahit magpalit ng HTML order */
+        .seat-1 { animation: orbitSeat1 40s linear infinite; }
+        .seat-2 { animation: orbitSeat2 40s linear infinite; }
+        .seat-3 { animation: orbitSeat3 40s linear infinite; }
+        .seat-4 { animation: orbitSeat4 40s linear infinite; }
+
+        /* Video Area */
+        .video-wrapper {
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            margin-top: 15px;
+        }
+        .video-wrapper video { width: 100%; display: block; }
+
+        /* --- ANIMATION MATHEMATICS --- */
+        @keyframes spinWheel {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes orbitSeat1 {
+            0% { transform: rotate(0deg) translate(120px) rotate(0deg); }
+            100% { transform: rotate(360deg) translate(120px) rotate(-360deg); }
+        }
+        @keyframes orbitSeat2 {
+            0% { transform: rotate(90deg) translate(120px) rotate(-90deg); }
+            100% { transform: rotate(450deg) translate(120px) rotate(-450deg); }
+        }
+        @keyframes orbitSeat3 {
+            0% { transform: rotate(180deg) translate(120px) rotate(-180deg); }
+            100% { transform: rotate(540deg) translate(120px) rotate(-540deg); }
+        }
+        @keyframes orbitSeat4 {
+            0% { transform: rotate(270deg) translate(120px) rotate(-270deg); }
+            100% { transform: rotate(630deg) translate(120px) rotate(-630deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-screen">
+        
+        <div class="envelope-wrapper" id="introScreen" onclick="openEnvelope()">
+            <div class="envelope" id="myEnvelope">
+                <div class="letter">❤️</div>
+            </div>
+            <p style="color: #ff6b81; font-weight: 500; margin-bottom: 20px;">click me!</p>
+            <button class="click-btn">Open App</button>
+        </div>
+
+        <div class="main-app-content" id="mainApp">
+            
+            <button class="music-btn" id="musicToggleBtn" onclick="toggleMusic()">🎵 Music: On</button>
+            
+            <h2 class="header-title">Our Secret Space ✨</h2>
+            
+            <div class="counter-box">
+                <span>Days we've been loving each other:</span>
+                <span class="counter-days" id="daysCounter">Loading...</span>
+            </div>
+
+            <div class="album-container">
+                <h3>🎡 Our Ferris Wheel</h3>
+                <p style="font-size: 0.75rem; color: #ccc; margin: 0; text-align: center;">Dahan-dahang umiikot ang mundo kasama ka... ✨</p>
+                
+                <div class="ferris-wheel-wrapper">
+                    <div class="wheel-stand-front"></div>
+                    
+                    <div class="wheel-pivot">
+                        <div class="actual-wheel"></div>
+                        <div class="wheel-center"></div>
+                        
+                        <div class="spoke spoke-1"></div>
+                        <div class="spoke spoke-2"></div>
+                        <div class="spoke spoke-3"></div>
+                        <div class="spoke spoke-4"></div>
+
+                        <div class="gondola-seat seat-1">
+                            <img src="p1.jpg" alt="Moment 1">
+                        </div>
+                        <div class="gondola-seat seat-2">
+                            <img src="p2.jpg" alt="Moment 2">
+                        </div>
+                        <div class="gondola-seat seat-3">
+                            <img src="p3.jpg" alt="Moment 3">
+                        </div>
+                        <div class="gondola-seat seat-4">
+                            <img src="p4.jpg" alt="Moment 4">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="album-container">
+                <h3>🎥 Fave Video</h3>
+                <div class="video-wrapper">
+                    <video controls id="myVideo">
+                        <source src="vid.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <audio id="bgMusic" src="bg.mp3" loop></audio>
+
+    <script>
+        const audio = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicToggleBtn');
+
+        function toggleMusic() {
+            if (audio.paused) {
+                audio.play();
+                musicBtn.innerText = "🎵 Music: On";
+                musicBtn.style.color = "#00ffcc";
+            } else {
+                audio.pause();
+                musicBtn.innerText = "🔇 Music: Off";
+                musicBtn.style.color = "#ff4757";
+            }
+        }
+
+        function openEnvelope() {
+            const envelope = document.getElementById('myEnvelope');
+            envelope.classList.add('open');
+            setTimeout(() => {
+                document.getElementById('introScreen').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                audio.play().catch(error => { console.log("Autoplay handled."); });
+                startCounter();
+            }, 1200);
+        }
+
+        function startCounter() {
+            const anniversaryDate = new Date("2018-09-10"); 
+            function updateCounter() {
+                const now = new Date();
+                const difference = now - anniversaryDate;
+                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                document.getElementById('daysCounter').innerText = `${days} Days`;
+            }
+            updateCounter();
+            setInterval(updateCounter, 1000 * 60 * 60);
+        }
+    </script>
+
+</body>
+</html>
